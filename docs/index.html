@@ -10,46 +10,48 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
-  <link rel="prefetch" href="./img/avatar_ali.png">
-  <link rel="prefetch" href="./img/avatar_duda.png">
-  <link rel="prefetch" href="./img/avatar_juca.png">
-  <link rel="prefetch" href="./img/avatar_lili.png">
+  <link rel="prefetch" href="./img/lvl1r.png">
+  <link rel="prefetch" href="./img/lvl2r.png">
+  <link rel="prefetch" href="./img/lvl3r.png">
+  <link rel="prefetch" href="./img/lvl4r.png">
+  <link rel="prefetch" href="./img/lvl5r.png">
   <script src="https://unpkg.com/alpinejs" defer></script>
 </head>
 
 <body class="antialiased text-preto6 bg-gray-100">
-  <div class="flex flex-col justify-center items-center h-screen bg-no-repeat bg-contain"
-    x-data="{itens, passo: 0, resultado}">
+  <div class="flex flex-col justify-center items-center h-screen bg-no-repeat bg-contain" x-data="{itens, resultados}">
     <div class="w-full max-w-xl p-3">
-      <header class="flex flex-col text-center items-center break-words" x-ref="inicio" x-show="passo === 0 ">
+      <header class="flex flex-col text-center items-center break-words" x-show="$store.passo === 0">
         <h1 class="text-6xl font-bold text-livros">Fim de Ano na Árvore</h1>
         <h2 class="text-4xl">Teste seu conhecimento sobre Árvore e sobre o nosso ano de 2021!</h2>
-        <img src="../src/img/perguntasQuiz.gif" class="my-8" alt="emojis variados que representam as perguntas" />
-        <button x-on:click="$refs.inicio.remove(); passo++"
+        <img src="./img/perguntasQuiz.gif" class="my-8" alt="emojis variados que representam as perguntas" />
+        <button x-on:click="$store.passo++"
           class="text-white bg-livros hover:bg-ariel3 transition-all rounded font-bold py-3 px-4">Iniciar</button>
       </header>
 
       <template x-for="(item, i) in itens" :key="i">
-        <section class="rounded-xl shadow overflow-hidden bg-gray-50" x-data="{ escolha: '' }" x-show="passo === i+1">
+        <section class="rounded-xl shadow overflow-hidden bg-gray-50" x-data="{ escolha: '', selecionado: '' }"
+          x-show="$store.passo === i+1">
           <h2 class="text-xl font-bold m-2.5 p-4" x-text="item.pergunta"></h2>
           <div class="container-respostas px-4">
-            <template x-for="resposta in item.respostas">
-              <label class="opcao-resposta" :class="{ 'active': escolha === resposta.valor }">
-                <input type="radio" :value="resposta.valor" x-model="escolha">
+            <template x-for="(resposta, j) in item.respostas" :key="j">
+              <label class="opcao-resposta" :class="{ 'active': j === selecionado }" x-on:click="selecionado = j">
+                <input type="radio" :value="resposta.valor" x-model.number="escolha">
                 <span x-text="resposta.texto"></span>
               </label>
             </template>
           </div>
           <div class="rodape-pergunta bg-gray-100 text-right mt-6 py-4 px-6 border-t border-solid border-gray-200">
-            <button
-              @click="$store.escolhas.listaDeEscolhas[i] = escolha; passo === 7 && (resultado = $store.escolhas.resultado()); passo++;"
+            <button @click="$store.passo++; $store.somatorio += escolha"
               class="text-white bg-livros transition-all disabled:opacity-60 rounded font-bold py-3 px-4"
-              :disabled="!escolha">Avançar</button>
+              :disabled="selecionado === ''">Avançar</button>
           </div>
         </section>
       </template>
 
-      <section class="rounded-xl text-center shadow overflow-hidden bg-gray-50" x-show="passo === 8">
+      <section class="rounded-xl text-center shadow overflow-hidden bg-gray-50" x-show="$store.passo === 11"
+        x-data="{resultado: resultados[0]}"
+        x-init="$watch('$store.somatorio', valor => resultado = resultados[Math.trunc((valor - 1) / 2)])">
         <div class="py-4 px-6 border-t border-solid border-gray-200 flex justify-center"
           :style="`background-color: ${resultado.corFundo}`">
           <img :src="resultado.avatar" :style="`border-color: ${resultado.corBorda}`"
@@ -72,17 +74,17 @@
       {
         pergunta: 'Qual foi o primeiro convidado do ano nos nossos fechamentos? 💎',
         respostas: [
-          { valor: 1, texto: 'Edu Lyra' },
           { valor: 0, texto: 'Monique Evelle' },
           { valor: 0, texto: 'Thiago Vinhal' },
+          { valor: 1, texto: 'Edu Lyra' },
           { valor: 0, texto: 'Gina Vieira' },
         ],
       },
       {
         pergunta: 'Qual foi o tema do primeiro Raízes de 2021? 🌱',
         respostas: [
-          { valor: 1, texto: 'LGBTQA+' },
           { valor: 0, texto: 'Gordofobia' },
+          { valor: 1, texto: 'LGBTQA+' },
           { valor: 0, texto: 'Parentalidade' },
           { valor: 0, texto: 'Capacitismo' },
         ],
@@ -90,18 +92,18 @@
       {
         pergunta: 'Quantas Marianas ao todo temos na Árvore? 💖',
         respostas: [
-          { valor: 1, texto: '9' },
           { valor: 0, texto: '10' },
           { valor: 0, texto: '5' },
           { valor: 0, texto: '12' },
+          { valor: 1, texto: '9' },
         ],
       },
       {
         pergunta: 'Qual a área que tem mais galhos e galhas? 🌳',
         respostas: [
-          { valor: 1, texto: 'Comercial' },
           { valor: 0, texto: 'Comunicação' },
           { valor: 0, texto: 'Engenharia' },
+          { valor: 1, texto: 'Comercial' },
           { valor: 0, texto: 'Pedagógico' },
         ],
       },
@@ -117,121 +119,96 @@
       {
         pergunta: 'Qual foi o primeiro livro lido no nosso clube de leitura Entre Folhas? 📖',
         respostas: [
+          { valor: 0, texto: 'As alegrias da maternidade' },
+          { valor: 0, texto: 'O sol é para todos' },
           { valor: 1, texto: 'Ideias para adiar o fim do mundo' },
-          { valor: 'a', texto: 'O sol é para todos' },
-          { valor: 'd', texto: 'As alegrias da maternidade' },
-          { valor: 'b', texto: 'Sapiens' },
+          { valor: 0, texto: 'Sapiens' },
         ],
       },
       {
         pergunta: 'Onde fica a Arvore? 📍',
         respostas: [
+          { valor: 0, texto: ' R. Manuel Carneiro - Santa Teresa' },
           { valor: 1, texto: 'Rua Sacadura Cabral, 142' },
           { valor: 0, texto: ' 42 wallaby way' },
           { valor: 0, texto: 'Praça Mauá, 1 - Centro' },
-          { valor: 0, texto: ' R. Manuel Carneiro - Santa Teresa' },
         ],
       },
       {
         pergunta: 'Como se chamam os mascotes da Árvore? 🐾',
         respostas: [
-          { valor: 1, texto: 'Áli, Lili, Juca, Duda e Otto' },
           { valor: 0, texto: 'Otto, Curupaco, Lili, Pipo e Duda' },
-          { valor: 0, texto: 'Lola, Lilica, Zazá, Júlio e Alípio ' },
           { valor: 0, texto: 'Áli, Juca, Quiquinho, Duda e Otto' },
+          { valor: 0, texto: 'Lola, Lilica, Zazá, Júlio e Alípio ' },
+          { valor: 1, texto: 'Áli, Lili, Juca, Duda e Otto' },
         ],
       },
       {
         pergunta: 'Quantos convidados fizeram parte do Conversas que Transformam 2021? ✨',
         respostas: [
-          { valor: 1, texto: '24' },
           { valor: 0, texto: '16' },
           { valor: 0, texto: '21' },
+          { valor: 1, texto: '24' },
           { valor: 0, texto: '27' },
         ],
       },
       {
         pergunta: 'Completamos quantas edições em atualidades 2021? 📰',
         respostas: [
-          { valor: 1, texto: '8' },
           { valor: 0, texto: '11' },
           { valor: 0, texto: '6' },
           { valor: 0, texto: '10' },
+          { valor: 1, texto: '8' },
         ],
       }
     ]
 
-    const resultado = [
+    const resultados = [
       {
-        id: '1',
         nome: 'Sementinha',
         titulo: 'Sementinha',
         bio: 'Muito bem! ',
-        avatar: '../src/img/lvl1r.png',
+        avatar: './img/lvl1r.png',
         corBorda: '#F58382',
         corFundo: '#FFE1A4',
       },
       {
-        id: '2',
         nome: 'Broto',
         titulo: 'Do mundo da lua',
         bio: 'Duda é o mascote mais romântico e sonhador da turma. Sua espécie é a Soldadinho-do-araripe. Duda ama livros de romance e fica sonhando acordado enquanto lê.',
-        avatar: '../src/img/lvl2r.png',
+        avatar: './img/lvl2r.png',
         corBorda: '#D7EEFB',
         corFundo: '#F9E0D6',
       },
       {
-        id: '3',
         nome: 'Caule',
         titulo: 'O antenado',
         bio: 'Juca é meio atrapalhado e comilão. Sua espécie é a Anta-brasileira. Juca gosta de ler ficção científica, fantasia e histórias de super-heróis.',
-        avatar: '../src/img/lvl3r.png',
+        avatar: './img/lvl3r.png',
         corBorda: '#FFE2A6',
         corFundo: '#F28180',
       },
       {
-        id: '4',
         nome: 'Ramificações',
         titulo: 'A sabe tudo',
         bio: 'Lili é a mais inteligente da turma. Ela é muito tranquila e gentil. Sua espécie é a Tartaruga-oliva. Lili gosta dos grandes clássicos, adora ler jornais e biografias.',
-        avatar: '../src/img/lvl4r.png',
+        avatar: './img/lvl4r.png',
         corBorda: '#84CCA7',
         corFundo: '#D6EFF9',
       },
       {
-        id: '5',
         nome: 'Plantinha',
         titulo: 'A sabe tudo',
         bio: 'Lili é a mais inteligente da turma. Ela é muito tranquila e gentil. Sua espécie é a Tartaruga-oliva. Lili gosta dos grandes clássicos, adora ler jornais e biografias.',
-        avatar: '../src/img/lvl5r.png',
+        avatar: './img/lvl5r.png',
         corBorda: '#84CCA7',
         corFundo: '#D6EFF9',
       },
     ]
 
     document.addEventListener('alpine:init', () => {
-      Alpine.store('escolhas', {
-        listaDeEscolhas: {},
-
-        adicionar(i, escolha) {
-          this.listaDeEscolhas[i] = escolha
-        },
-
-        resultado() {
-          const listaLetras = Object.values(this.listaDeEscolhas);
-          const quantidadeEscolhas = listaLetras.reduce((acumulador, letra) => {
-            acumulador[letra] = acumulador[letra] + 1 || 1
-
-            return acumulador
-          }, {});
-
-          const chavesObjetos = Object.keys(quantidadeEscolhas).sort(function (a, b) {
-            return quantidadeEscolhas[b] - quantidadeEscolhas[a];
-          })
-
-          return resultado.filter(mascote => mascote.id === chavesObjetos[0])[0]
-        },
-      })
+      Alpine.store('somatorio', 0)
+      Alpine.store('passo', 0)
     })
   </script>
 </body>
