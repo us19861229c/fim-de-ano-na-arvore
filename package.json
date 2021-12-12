@@ -1,0 +1,16 @@
+{
+  "name": "quiz-turma-do-otto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "NODE_ENV=production npx tailwindcss -i ./src/style.css -o ./docs/style.css --minify",
+    "dev": "NODE_ENV=production npx tailwindcss -i ./src/style.css -o ./docs/style.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "postcss-import": "^14.0.2"
+  }
+}

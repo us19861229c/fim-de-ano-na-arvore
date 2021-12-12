@@ -1,0 +1,18 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.opcao-resposta {
+  @apply block m-2.5 p-2.5
+    border rounded
+    cursor-pointer
+    hover:border-ariel3 hover:text-ariel3 hover:underline;
+}
+
+.opcao-resposta.active {
+  @apply border-ariel3 text-ariel3;
+}
+
+input {
+  @apply sr-only;
+}
